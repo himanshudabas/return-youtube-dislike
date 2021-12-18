@@ -31,7 +31,7 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .then((response) => {
         sendResponse(response);
       })
-      .catch();
+      .catch((e) => {sendResponse({error: e.message})});
     return true;
   } else if (request.message == "send_links") {
     toSend = toSend.concat(request.videoIds.filter((x) => !sentIds.has(x)));

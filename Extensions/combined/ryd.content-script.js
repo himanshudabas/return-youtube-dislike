@@ -121,7 +121,14 @@ function RYD() {
   }
 
   function processResponse(response) {
-    const formattedDislike = numberFormat(response.dislikes);
+    let formattedDislike;
+    if (response.error !== undefined) {
+      cLog('(FETCH ERROR) while fetching the dislike count.');
+      cLog(response.error);
+      formattedDislike = 'FAILED!'
+    } else {
+      formattedDislike = numberFormat(response.dislikes);
+    }
     setDislikes(formattedDislike);
     storedData.dislikes = parseInt(response.dislikes);
     storedData.likes = getLikeCountFromButton() || parseInt(response.likes);
@@ -368,7 +375,7 @@ function RYD() {
   });
 
   function clearState() {
-    if (getButtons() !== undefined) processResponse({likes: 0, dislikes: 0});
+    if (getButtons() !== undefined) processResponse({likes: 0, dislikes: 'DISLIKE'});
   }
 
   setTimeout(() => sendVideoIds(), 2500);
