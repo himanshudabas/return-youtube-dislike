@@ -363,8 +363,13 @@ function RYD() {
   document.addEventListener("yt-navigate-finish", function (event) {
     if (jsInitChecktimer !== null) clearInterval(jsInitChecktimer);
     window.returnDislikeButtonlistenersSet = false;
+    clearState();
     setEventListeners();
   });
+
+  function clearState() {
+    if (getButtons() !== undefined) processResponse({likes: 0, dislikes: 0});
+  }
 
   setTimeout(() => sendVideoIds(), 2500);
 
