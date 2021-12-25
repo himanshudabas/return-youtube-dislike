@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background-script.js"
+  },
+  "host_permissions": ["*://*.youtube.com/*"],
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://youtube.com/*",
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*"
+      ],
+      "exclude_matches": ["*://*.music.youtube.com/*"],
+      "js": ["content-script.js"],
+      "css": ["content-style.css"]
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["*://*.youtube.com/*"]
+  }
+}

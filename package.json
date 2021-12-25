@@ -2,33 +2,45 @@
   "name": "return-youtube-dislike",
   "version": "2.0.0",
   "description": "Chrome extension to return youtube dislikes",
-  "main": "ryd.content-script.js",
+  "main": "index.js",
   "scripts": {
-    "start": "webpack \"./Extensions/combined/ryd.content-script.js\" -o \"./Extensions/combined/dist/\" --watch",
-    "build": "webpack \"./Extensions/combined/ryd.content-script.js\" -o \"./Extensions/combined\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "web-run": "npm run web-run:chrome",
+    "web-run:firefox": "npm run build:dev:firefox && cd dist && web-ext run --start-url https://addons.mozilla.org/firefox/addon/ublock-origin/",
+    "web-run:chrome": "npm run build:dev:chrome && cd dist && web-ext run --start-url https://chrome.google.com/webstore/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm -t chromium",
+    "build": "npm run build:chrome",
+    "build:chrome": "rimraf dist && webpack --env browser=chrome --config webpack/webpack.prod.js",
+    "build:firefox": "rimraf dist && webpack --env browser=firefox --config webpack/webpack.prod.js",
+    "build:dev": "npm run build:dev:chrome",
+    "build:dev:chrome": "rimraf dist && webpack --env browser=chrome --config webpack/webpack.dev.js",
+    "build:dev:firefox": "rimraf dist && webpack --env browser=firefox --config webpack/webpack.dev.js",
+    "build:watch": "npm run build:watch:chrome",
+    "build:watch:chrome": "webpack --env browser=chrome --config webpack/webpack.dev.js --watch",
+    "build:watch:firefox": "webpack --env browser=firefox --config webpack/webpack.dev.js --watch",
+    "dev": "npm run build:dev && concurrently \"npm run web-run\" \"npm run build:watch\"",
+    "dev:firefox": "npm run build:dev:firefox && concurrently \"npm run web-run:firefox\" \"npm run build:watch:firefox\"",
+    "clean": "rimraf dist"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Anarios/return-youtube-dislike.git"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
-  "keywords": [
-    "youtube",
-    "dislike",
-    "return",
-    "extension"
-  ],
-  "author": "Anarios",
-  "bugs": {
-    "url": "https://github.com/Anarios/return-youtube-dislike/issues"
-  },
-  "homepage": "https://github.com/Anarios/return-youtube-dislike#readme",
   "devDependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "@babel/runtime": "^7.16.5",
-    "babel-loader": "^8.2.3",
+    "@types/chrome": "^0.0.171",
+    "@types/firefox-webext-browser": "^94.0.0",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "clean-webpack-plugin": "^4.0.0",
+    "concurrently": "^6.5.1",
     "copy-webpack-plugin": "^10.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "web-ext": "^6.6.0",
+    "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1"
   }
 }

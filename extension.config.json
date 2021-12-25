@@ -1,0 +1,10 @@
+{
+  "serverAddress": "https://returnyoutubedislikeapi.com",
+  "rydLinks": {
+      "website": "https://returnyoutubedislike.com",
+      "github": "https://github.com/Anarios/return-youtube-dislike",
+      "discord": "https://discord.gg/mYnESY4Md5",
+      "faq": "https://returnyoutubedislike.com/faq",
+      "donate": "https://returnyoutubedislike.com/donate"
+  }
+}
