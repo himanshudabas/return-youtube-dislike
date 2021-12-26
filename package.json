@@ -2,7 +2,22 @@
   "name": "return-youtube-dislike",
   "version": "2.0.0",
   "description": "Chrome extension to return youtube dislikes",
+  "author": "Anarios",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anarios/return-youtube-dislike.git"
+  },
+  "keywords": [
+    "youtube",
+    "dislike",
+    "return",
+    "extension"
+  ],
+  "bugs": {
+    "url": "https://github.com/Anarios/return-youtube-dislike/issues"
+  },
+  "homepage": "https://github.com/Anarios/return-youtube-dislike#readme",
   "scripts": {
     "web-run": "npm run web-run:chrome",
     "web-run:firefox": "npm run build:dev:firefox && cd dist && web-ext run --start-url https://addons.mozilla.org/firefox/addon/ublock-origin/",
@@ -20,22 +35,12 @@
     "dev:firefox": "npm run build:dev:firefox && concurrently \"npm run web-run:firefox\" \"npm run build:watch:firefox\"",
     "clean": "rimraf dist"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
-  },
   "devDependencies": {
     "@types/chrome": "^0.0.171",
     "@types/firefox-webext-browser": "^94.0.0",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "clean-webpack-plugin": "^4.0.0",
     "concurrently": "^6.5.1",
     "copy-webpack-plugin": "^10.2.0",
-    "html-webpack-plugin": "^5.5.0",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.4",

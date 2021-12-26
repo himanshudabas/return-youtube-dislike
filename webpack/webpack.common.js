@@ -1,4 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const path = require('path');
 const BuildManifest = require('./webpack.manifest');
@@ -18,18 +17,13 @@ const tsRule = {
 
 const plugins = (env) => {
   return [
-    // new HtmlWebpackPlugin({
-    //   template: 'src/popup-page/popup.html',
-    //   filename: 'popup.html',
-    //   chunks: ['popup'],
-    // }),
     new BuildManifest({
       browser: env.browser,
       pretty: env.mode === "production",
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'public', to: '../dist' },
+        { from: 'public', to: '../' },
       ],
     }),
   ]
@@ -43,7 +37,7 @@ module.exports = env => ({
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, "../dist"),
+    path: path.resolve(__dirname, "../dist/js"),
   },
   module: {
     rules: [tsRule],
