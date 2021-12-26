@@ -45,4 +45,14 @@ export interface VoteSubmissionPayload extends VideoId {
   userId: string,
 }
 
+export enum VideoState {
+  LIKED_STATE = "LIKED_STATE",
+  DISLIKED_STATE = "DISLIKED_STATE",
+  NEUTRAL_STATE = "NEUTRAL_STATE",
+}
 
+export interface VideoData {
+  likes: number,
+  dislikes: number,
+  previousState: VideoState,
+}

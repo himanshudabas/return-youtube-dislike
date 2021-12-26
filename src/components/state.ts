@@ -3,15 +3,13 @@ import { createRateBar } from "./bar";
 import { getVideoId, numberFormat } from "./utils";
 import { sendVideoIds } from "./events";
 import { logMsg } from "../utils";
+import { VideoData, VideoDislikesResponse, VideoState } from "../types";
 
-const LIKED_STATE = "LIKED_STATE";
-const DISLIKED_STATE = "DISLIKED_STATE";
-const NEUTRAL_STATE = "NEUTRAL_STATE";
 
-let storedData = {
+const storedData: VideoData = {
   likes: 0,
   dislikes: 0,
-  previousState: NEUTRAL_STATE,
+  previousState: VideoState.NEUTRAL_STATE,
 };
 
 function isMobile() {
@@ -38,14 +36,14 @@ function isVideoDisliked() {
   return getDislikeButton().classList.contains("style-default-active");
 }
 
-function getState(storedData) {
+function getState(storedData: VideoData) {
   if (isVideoLiked()) {
-    return { current: LIKED_STATE, previous: storedData.previousState };
+    return { current: VideoState.LIKED_STATE, previous: storedData.previousState };
   }
   if (isVideoDisliked()) {
-    return { current: DISLIKED_STATE, previous: storedData.previousState };
+    return { current: VideoState.DISLIKED_STATE, previous: storedData.previousState };
   }
-  return { current: NEUTRAL_STATE, previous: storedData.previousState };
+  return { current: VideoState.NEUTRAL_STATE, previous: storedData.previousState };
 }
 
 //---   Sets The Likes And Dislikes Values   ---//
@@ -69,22 +67,23 @@ function getLikeCountFromButton() {
   return likesStr.length > 0 ? parseInt(likesStr) : false;
 }
 
-function processResponse(response, storedData) {
+function processResponse(response: VideoDislikesResponse, storedData: VideoData) {
   const formattedDislike = numberFormat(response.dislikes);
   setDislikes(formattedDislike);
-  storedData.dislikes = parseInt(response.dislikes);
-  storedData.likes = getLikeCountFromButton() || parseInt(response.likes);
+  storedData.dislikes = response.dislikes;
+  storedData.likes = getLikeCountFromButton() || response.likes;
   createRateBar(storedData.likes, storedData.dislikes);
 }
 
-function setState(storedData) {
+function setState(storedData: VideoData) {
   storedData.previousState = isVideoDisliked()
-    ? DISLIKED_STATE
+    ? VideoState.DISLIKED_STATE
     : isVideoLiked()
-      ? LIKED_STATE
-      : NEUTRAL_STATE;
+      ? VideoState.LIKED_STATE
+      : VideoState.NEUTRAL_STATE;
   let statsSet = false;
 
+  logMsg(`API call started.`)
   chrome.runtime.sendMessage(
     {
       message: "setPageState",
@@ -92,9 +91,8 @@ function setState(storedData) {
       state: getState(storedData).current,
       likeCount: getLikeCountFromButton() || null,
     },
-    function (response) {
-      logMsg("response from api:");
-      logMsg(JSON.stringify(response));
+    function (response: VideoDislikesResponse) {
+      logMsg(`Response from ryd API: ${JSON.stringify(response)}`);
       if (response !== undefined && !("traceId" in response) && !statsSet) {
         processResponse(response, storedData);
       } else {
@@ -103,7 +101,7 @@ function setState(storedData) {
   );
 }
 
-function setInitialState() {
+function setInitialState(): void {
   setState(storedData);
   setTimeout(() => {
     sendVideoIds();
@@ -120,8 +118,5 @@ export {
   setLikes,
   setDislikes,
   getLikeCountFromButton,
-  LIKED_STATE,
-  DISLIKED_STATE,
-  NEUTRAL_STATE,
   storedData,
 };

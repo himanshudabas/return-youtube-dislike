@@ -1,6 +1,6 @@
 import Config from "./config";
 import { Message, MessageResponse } from "./messageTypes";
-import { wait } from "./utils";
+import { logMsg, wait } from "./utils";
 
 
 window.RYD = Config;
@@ -45,6 +45,7 @@ async function runThePopup(messageListener?: MessageListener): Promise<void> {
 
   type InputPageElements = {
     voteSubmissionToggle?: HTMLInputElement,
+    debugModeToggle?: HTMLInputElement,
   };
 
   type PageElements = { [key: string]: HTMLElement } & InputPageElements
@@ -60,10 +61,14 @@ async function runThePopup(messageListener?: MessageListener): Promise<void> {
     "donateUrl",
     "advancedToggle",
     "advancedSettings",
+    "debugModeToggle",
   ].forEach(id => PageElements[id] = document.getElementById(id));
 
   PageElements.voteSubmissionToggle.addEventListener("change", function () {
     toggleVoteSubmission(this.checked);
+  });
+  PageElements.debugModeToggle.addEventListener("change", function () {
+    toggleDebugMode(this.checked);
   });
   PageElements.websiteUrl.addEventListener("click", () => openNew("Website"));
   PageElements.gitHubUrl.addEventListener("click", () => openNew("GitHub"));
@@ -76,6 +81,11 @@ async function runThePopup(messageListener?: MessageListener): Promise<void> {
 
   function toggleVoteSubmission(enabled: boolean): void {
     Config.config.voteSubmission = enabled;
+  }
+
+  function toggleDebugMode(enabled: boolean): void {
+    Config.config.debugMode = enabled;
+    logMsg(`Debug mode ${enabled ? "enabled" : "disabled"}`, true);
   }
 
   function toggleAdvancedSettings(): void {
@@ -96,6 +106,7 @@ async function runThePopup(messageListener?: MessageListener): Promise<void> {
 
   function initUIElements(): void {
     PageElements.voteSubmissionToggle.checked = Config.config.voteSubmission;
+    PageElements.debugModeToggle.checked = Config.config.debugMode;
   }
 }
 

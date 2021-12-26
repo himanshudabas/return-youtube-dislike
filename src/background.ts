@@ -1,6 +1,6 @@
 import Config from "./config";
 import CompileConfig from "../extension.config.json"
-import { StorageChangesObject } from "./types";
+import { StorageChangesObject, VideoDislikesResponse } from "./types";
 import { changeIconForVoteSubmission, getOAuthToken, logError, logMsg, objectToURI, registerUser, setPageState, submitVote } from "./utils";
 import { sendRequestToCustomServer } from "./bg-utils";
 
@@ -35,7 +35,7 @@ function addBackgroundScriptListeners(): void {
         return true;
       case "setPageState":
         setPageState(request.videoId, request.likeCount || '')
-          .then(resp => callback(resp))
+          .then((resp: VideoDislikesResponse) => callback(resp))
           .catch(err => logError(err, "error while fetching dislike count."));
         return true;
       case "registerUser":

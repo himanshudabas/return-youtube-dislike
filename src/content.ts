@@ -11,7 +11,8 @@ let jsInitChecktimer = null;
 
 function setEventListeners() {
   function checkForJS_Finish() {
-    if (getButtons()?.offsetParent && isVideoLoaded()) {
+    if (getButtons()?.offsetParent) {
+      logMsg(`finished checkForJS_Finish()`);
       clearInterval(jsInitChecktimer);
       jsInitChecktimer = null;
       addLikeDislikeEventListener();
@@ -27,6 +28,7 @@ function setEventListeners() {
 setEventListeners();
 
 document.addEventListener("yt-navigate-finish", function (event) {
+  logMsg(`finished yt-navigate-finish`);
   if (jsInitChecktimer !== null) clearInterval(jsInitChecktimer);
   window.returnDislikeButtonlistenersSet = false;
   setEventListeners();

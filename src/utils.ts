@@ -151,8 +151,9 @@ async function solvePuzzle(puzzle: string, difficulty: number): Promise<PuzzleSo
 
 function changeExtensionIcon(iconName: string): void {
   if (chrome.action !== undefined) chrome.action.setIcon({ path: iconDir + "/" + iconName });
+  if (chrome.browserAction !== undefined) chrome.browserAction.setIcon({ path: iconDir + "/" + iconName });
   else if (browser !== undefined && browser.browserAction !== undefined) browser.browserAction.setIcon({ path: iconDir + "/" + iconName });
-  else console.error('changing extension icon is not supported on this browser');
+  else logWarn('changing extension icon is not supported on this browser');
 }
 
 export function changeIconForVoteSubmission(): void {
@@ -189,9 +190,9 @@ export async function registerUser(): Promise<string> {
 export function getOAuthToken(): Promise<chrome.identity.UserInfo> {
   return new Promise((resolve) => {
     chrome.identity.getAuthToken({ interactive: true }, (token) => {
-      console.log(`OAuth Token: ${token}`);
+      logMsg(`OAuth Token: ${token}`);
       chrome.identity.getProfileUserInfo(function (userInfo) {
-        console.log(`UserInfo from OAuth Token: ${JSON.stringify(userInfo)}`);
+        logMsg(`UserInfo from OAuth Token: ${JSON.stringify(userInfo)}`);
         resolve(userInfo);
       });
     });
@@ -203,7 +204,7 @@ export async function getVideoDislikeCount(data: VideoDislikePayload): Promise<V
     .then(resp => JSON.parse(resp.responseText) as unknown as VideoDislikesResponse);
 }
 
-export async function setPageState(videoId: string, likeCount: number | null) {
+export async function setPageState(videoId: string, likeCount: number | null): Promise<VideoDislikesResponse> {
   let data = {
     videoId: videoId,
     likeCount: likeCount,
@@ -271,8 +272,8 @@ export function getUTCTime(): string {
   return utc;
 }
 
-export function logError(err: Error, optMsg: string | null): void {
-  console.error(`[RYD]: [${getUTCTime()}] - ${optMsg} | ${err}`)
+export function logError(err: Error, optMsg: string = null): void {
+  console.error(`[RYD]: [${getUTCTime()}] - ${optMsg} | ${err}`);
 }
 
 /**
@@ -280,6 +281,11 @@ export function logError(err: Error, optMsg: string | null): void {
  * @param msg to be printed to console
  */
 export function logMsg(msg: string, override: boolean = false): void {
-  if (override || Config?.config?.debugMode)
-    console.log(`[RYD]: [${getUTCTime()}] - ${msg}`)
+  let toLog: boolean = Config.config == undefined ? Config.defaults.debugMode : Config.config.debugMode;
+  if (override || toLog)
+    console.log(`[RYD]: [${getUTCTime()}] - ${msg}`);
+}
+
+export function logWarn(msg: string): void {
+  console.warn(`[RYD]: [${getUTCTime()}] - ${msg}`);
 }

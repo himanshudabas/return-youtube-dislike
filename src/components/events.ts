@@ -1,7 +1,8 @@
 import { getVideoId, numberFormat } from "./utils"
 import { checkForSignInButton, getButtons } from "./buttons"
-import { NEUTRAL_STATE, LIKED_STATE, DISLIKED_STATE, setDislikes, storedData } from "./state"
+import { setDislikes, storedData } from "./state"
 import { createRateBar } from "./bar"
+import { VideoState } from "../types";
 
 function sendVote(vote: number) {
   chrome.runtime.sendMessage({
@@ -39,48 +40,48 @@ function sendVideoIds() {
 
 function likeClicked() {
   if (checkForSignInButton() === false) {
-    if (storedData.previousState === DISLIKED_STATE) {
+    if (storedData.previousState === VideoState.DISLIKED_STATE) {
       sendVote(1);
       storedData.dislikes--;
       storedData.likes++;
       createRateBar(storedData.likes, storedData.dislikes);
       setDislikes(numberFormat(storedData.dislikes));
-      storedData.previousState = LIKED_STATE;
-    } else if (storedData.previousState === NEUTRAL_STATE) {
+      storedData.previousState = VideoState.LIKED_STATE;
+    } else if (storedData.previousState === VideoState.NEUTRAL_STATE) {
       sendVote(1);
       storedData.likes++;
       createRateBar(storedData.likes, storedData.dislikes);
-      storedData.previousState = LIKED_STATE;
-    } else if ((storedData.previousState = LIKED_STATE)) {
+      storedData.previousState = VideoState.LIKED_STATE;
+    } else if ((storedData.previousState = VideoState.LIKED_STATE)) {
       sendVote(0);
       storedData.likes--;
       createRateBar(storedData.likes, storedData.dislikes);
-      storedData.previousState = NEUTRAL_STATE;
+      storedData.previousState = VideoState.NEUTRAL_STATE;
     }
   }
 }
 
 function dislikeClicked() {
   if (checkForSignInButton() == false) {
-    if (storedData.previousState === NEUTRAL_STATE) {
+    if (storedData.previousState === VideoState.NEUTRAL_STATE) {
       sendVote(-1);
       storedData.dislikes++;
       setDislikes(numberFormat(storedData.dislikes));
       createRateBar(storedData.likes, storedData.dislikes);
-      storedData.previousState = DISLIKED_STATE;
-    } else if (storedData.previousState === DISLIKED_STATE) {
+      storedData.previousState = VideoState.DISLIKED_STATE;
+    } else if (storedData.previousState === VideoState.DISLIKED_STATE) {
       sendVote(0);
       storedData.dislikes--;
       setDislikes(numberFormat(storedData.dislikes));
       createRateBar(storedData.likes, storedData.dislikes);
-      storedData.previousState = NEUTRAL_STATE;
-    } else if (storedData.previousState === LIKED_STATE) {
+      storedData.previousState = VideoState.NEUTRAL_STATE;
+    } else if (storedData.previousState === VideoState.LIKED_STATE) {
       sendVote(-1);
       storedData.likes--;
       storedData.dislikes++;
       setDislikes(numberFormat(storedData.dislikes));
       createRateBar(storedData.likes, storedData.dislikes);
-      storedData.previousState = DISLIKED_STATE;
+      storedData.previousState = VideoState.DISLIKED_STATE;
     }
   }
 }
