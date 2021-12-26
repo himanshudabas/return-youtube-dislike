@@ -151,8 +151,7 @@ async function solvePuzzle(puzzle: string, difficulty: number): Promise<PuzzleSo
 
 function changeExtensionIcon(iconName: string): void {
   if (chrome.action !== undefined) chrome.action.setIcon({ path: iconDir + "/" + iconName });
-  if (chrome.browserAction !== undefined) chrome.browserAction.setIcon({ path: iconDir + "/" + iconName });
-  else if (browser !== undefined && browser.browserAction !== undefined) browser.browserAction.setIcon({ path: iconDir + "/" + iconName });
+  else if (isFirefox()) browser.browserAction.setIcon({ path: iconDir + "/" + iconName });
   else logWarn('changing extension icon is not supported on this browser');
 }
 
