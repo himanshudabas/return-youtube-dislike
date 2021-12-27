@@ -6,6 +6,7 @@ import { sendVideoIds } from "./events";
 const LIKED_STATE = "LIKED_STATE";
 const DISLIKED_STATE = "DISLIKED_STATE";
 const NEUTRAL_STATE = "NEUTRAL_STATE";
+const apiUrl = "https://returnyoutubedislikeapi.com";
 
 let extConfig = {
   disableVoteSubmission: false,
@@ -89,22 +90,43 @@ function setState(storedData) {
     : NEUTRAL_STATE;
   let statsSet = false;
 
-  getBrowser().runtime.sendMessage(
-    {
-      message: "set_state",
-      videoId: getVideoId(window.location.href),
-      state: getState(storedData).current,
-      likeCount: getLikeCountFromButton() || null,
+  fetch(`${apiUrl}/votes?videoId=${getVideoId(window.location.href)}&likeCount=${getLikeCountFromButton() || ''}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
     },
-    function (response) {
+  })
+    .then((response) => response.json())
+    .then((response) => {
       cLog("response from api:");
       cLog(JSON.stringify(response));
       if (response !== undefined && !("traceId" in response) && !statsSet) {
         processResponse(response, storedData);
-      } else {
-      }
-    }
-  );
+      } else {}
+    })
+    .catch();
+
+  /** 
+   * commenting this because in manifest v3 sometimes service worker dies
+   * and doesn't wake up. so we need to make the call from injected content-script
+  */
+ 
+  // getBrowser().runtime.sendMessage(
+  //   {
+  //     message: "set_state",
+  //     videoId: getVideoId(window.location.href),
+  //     state: getState(storedData).current,
+  //     likeCount: getLikeCountFromButton() || null,
+  //   },
+  //   function (response) {
+  //     cLog("response from api:");
+  //     cLog(JSON.stringify(response));
+  //     if (response !== undefined && !("traceId" in response) && !statsSet) {
+  //       processResponse(response, storedData);
+  //     } else {
+  //     }
+  //   }
+  // );
 }
 
 function setInitialState() {
